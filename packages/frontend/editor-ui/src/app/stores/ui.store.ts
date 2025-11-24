@@ -89,7 +89,7 @@ import identity from 'lodash/identity';
 import * as modalRegistry from '@/app/moduleInitializer/modalRegistry';
 import { useTelemetry } from '@/app/composables/useTelemetry';
 
-let savedTheme: ThemeOption = 'system';
+let savedTheme: ThemeOption = 'light';
 
 try {
 	const value = getThemeOverride();

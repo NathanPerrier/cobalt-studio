@@ -6,11 +6,9 @@ import { useI18n } from '@n8n/i18n';
 import {
 	N8nNavigationDropdown,
 	N8nTooltip,
-	N8nLink,
 	N8nIconButton,
 	N8nMenuItem,
 	isCustomMenuItem,
-	N8nLogo,
 	N8nPopoverReka,
 	N8nScrollArea,
 	N8nText,
@@ -49,7 +47,6 @@ import { useBecomeTemplateCreatorStore } from '@/app/components/BecomeTemplateCr
 import BecomeTemplateCreatorCta from '@/app/components/BecomeTemplateCreatorCta/BecomeTemplateCreatorCta.vue';
 import VersionUpdateCTA from '@/app/components/VersionUpdateCTA.vue';
 import { TemplateClickSource, trackTemplatesClick } from '@/experiments/utils';
-import { I18nT } from 'vue-i18n';
 import { usePersonalizedTemplatesV2Store } from '@/experiments/templateRecoV2/stores/templateRecoV2.store';
 import { usePersonalizedTemplatesV3Store } from '@/experiments/personalizedTemplatesV3/stores/personalizedTemplatesV3.store';
 import { useTemplatesDataQualityStore } from '@/experiments/templatesDataQuality/stores/templatesDataQuality.store';
@@ -451,35 +448,18 @@ onClickOutside(createBtn as Ref<VueInstance>, () => {
 			<N8nIcon v-else icon="chevron-left" size="xsmall" class="mr-5xs" />
 		</div>
 		<div :class="$style.logo">
-			<N8nLogo
-				size="small"
-				:collapsed="isCollapsed"
-				:release-channel="settingsStore.settings.releaseChannel"
-			>
-				<N8nTooltip
-					v-if="sourceControlStore.preferences.branchReadOnly && !isCollapsed"
-					placement="bottom"
-				>
-					<template #content>
-						<I18nT keypath="readOnlyEnv.tooltip" scope="global">
-							<template #link>
-								<N8nLink
-									to="https://docs.n8n.io/source-control-environments/setup/#step-4-connect-n8n-and-configure-your-instance"
-									size="small"
-								>
-									{{ i18n.baseText('readOnlyEnv.tooltip.link') }}
-								</N8nLink>
-							</template>
-						</I18nT>
-					</template>
-					<N8nIcon
-						data-test-id="read-only-env-icon"
-						icon="lock"
-						size="xsmall"
-						:class="$style.readOnlyEnvironmentIcon"
-					/>
-				</N8nTooltip>
-			</N8nLogo>
+			<img
+				src="/static/logo.png"
+				alt="Cobalt Logo"
+				style="height: 30px; margin-left: 10px"
+				v-if="!isCollapsed"
+			/>
+			<img
+				src="/static/logo.png"
+				alt="Cobalt Logo"
+				style="height: 30px; width: 30px; object-fit: contain"
+				v-else
+			/>
 			<N8nNavigationDropdown
 				ref="createBtn"
 				data-test-id="universal-add"

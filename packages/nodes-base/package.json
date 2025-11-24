@@ -414,6 +414,7 @@
       "dist/credentials/ZulipApi.credentials.js"
     ],
     "nodes": [
+      "dist/nodes/CobaltControl/CobaltControl.node.js",
       "dist/nodes/CobaltReply/CobaltReply.node.js",
       "dist/nodes/CobaltTrigger/CobaltTrigger.node.js",
       "dist/nodes/ActionNetwork/ActionNetwork.node.js",
