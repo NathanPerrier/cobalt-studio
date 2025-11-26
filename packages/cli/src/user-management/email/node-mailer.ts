@@ -55,9 +55,9 @@ export class NodeMailer {
 				html: mailData.body,
 				attachments: [
 					{
-						cid: 'n8n-logo',
-						filename: 'n8n-logo.png',
-						path: path.resolve(__dirname, 'templates/n8n-logo.png'),
+						cid: 'fullstop-logo',
+						filename: 'logomark-light.png',
+						path: path.resolve(__dirname, 'templates/logomark-light.png'),
 						contentDisposition: 'inline',
 					},
 				],
