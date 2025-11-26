@@ -124,6 +124,7 @@
       "dist/nodes/text_splitters/TextSplitterTokenSplitter/TextSplitterTokenSplitter.node.js",
       "dist/nodes/tools/ToolCalculator/ToolCalculator.node.js",
       "dist/nodes/tools/ToolCobaltEscalation/ToolCobaltEscalation.node.js",
+      "dist/nodes/tools/ToolCobaltRichContent/ToolCobaltRichContent.node.js",
       "dist/nodes/tools/ToolCode/ToolCode.node.js",
       "dist/nodes/tools/ToolHttpRequest/ToolHttpRequest.node.js",
       "dist/nodes/tools/ToolSearXng/ToolSearXng.node.js",
