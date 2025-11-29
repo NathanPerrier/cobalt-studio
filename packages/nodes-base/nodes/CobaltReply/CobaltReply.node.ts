@@ -361,14 +361,6 @@ export class CobaltReply implements INodeType {
 								displayOptions: { show: { type: ['information'] } },
 								default: '',
 							},
-							{
-								displayName: 'Timestamp',
-								name: 'infoTimestamp',
-								type: 'string',
-								displayOptions: { show: { type: ['information'] } },
-								default: '',
-								description: 'ISO string or JS Date',
-							},
 						],
 					},
 				],
@@ -581,7 +573,6 @@ export class CobaltReply implements INodeType {
 					richContent.push({
 						type: 'information',
 						text: item.infoText,
-						timestamp: item.infoTimestamp || new Date().toISOString(),
 					});
 				}
 			}
