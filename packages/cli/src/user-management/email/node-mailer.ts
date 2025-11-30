@@ -56,8 +56,8 @@ export class NodeMailer {
 				attachments: [
 					{
 						cid: 'fullstop-logo',
-						filename: 'logomark-light.png',
-						path: path.resolve(__dirname, 'templates/logomark-light.png'),
+						filename: 'logomark-light.svg',
+						path: path.resolve(__dirname, 'templates/logomark-light.svg'),
 						contentDisposition: 'inline',
 					},
 				],

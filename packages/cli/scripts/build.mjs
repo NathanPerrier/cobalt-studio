@@ -38,7 +38,7 @@ function generateUserManagementEmailTemplates() {
 		shell.exec(command, { silent: false });
 	});
 
-	shell.cp(path.resolve(sourceDir, 'logomark-light.png'), destinationDir);
+	shell.cp(path.resolve(sourceDir, 'logomark-light.svg'), destinationDir);
 }
 
 function createPublicApiDirectory() {
