@@ -423,6 +423,7 @@
       "dist/nodes/CobaltTrigger/CobaltLiveAgentActiveTrigger.node.js",
       "dist/nodes/CobaltTrigger/CobaltAnalyticsTrigger.node.js",
       "dist/nodes/CobaltTrigger/CobaltTranscriptTrigger.node.js",
+      "dist/nodes/CobaltTrigger/CobaltEmailTranscriptTrigger.node.js",
       "dist/nodes/CobaltTrigger/CobaltTimeoutTrigger.node.js",
       "dist/nodes/CobaltTrigger/CobaltEndChatTrigger.node.js",
       "dist/nodes/ActionNetwork/ActionNetwork.node.js",

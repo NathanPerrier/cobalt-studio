@@ -41,8 +41,7 @@ export class CcaipApi implements ICredentialType {
 		type: 'generic',
 		properties: {
 			headers: {
-				// Assuming standard Authorization header, can be adjusted if specific header is needed
-				Authorization: '={{$credentials.apiKey}}',
+				api_key: '={{$credentials.apiKey}}',
 			},
 		},
 	};

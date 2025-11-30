@@ -1,8 +1,9 @@
-import type {
+import {
 	IExecuteFunctions,
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
+	NodeOperationError,
 } from 'n8n-workflow';
 
 export class CobaltReply implements INodeType {
@@ -439,8 +440,8 @@ export class CobaltReply implements INodeType {
 						default: false,
 					},
 					{
-						displayName: 'Livechat Issue',
-						name: 'livechatIssue',
+						displayName: 'Live Agent Issue',
+						name: 'liveAgentIssue',
 						type: 'boolean',
 						default: false,
 					},
@@ -472,6 +473,10 @@ export class CobaltReply implements INodeType {
 			if (!sessionId) {
 				const inputSessionId = items[i].json.sessionId as string;
 				if (inputSessionId) sessionId = inputSessionId;
+			}
+
+			if (!sessionId) {
+				throw new NodeOperationError(this.getNode(), 'Session ID is missing', { itemIndex: i });
 			}
 
 			const contentData = this.getNodeParameter('content', i) as { item: any[] };
@@ -588,7 +593,7 @@ export class CobaltReply implements INodeType {
 				liveAgentRequested?: boolean;
 				lockInput?: boolean;
 				liveAgentUnavailable?: boolean;
-				livechatIssue?: boolean;
+				liveAgentIssue?: boolean;
 				getLocation?: boolean;
 				emailRequested?: boolean;
 				emailSent?: boolean;

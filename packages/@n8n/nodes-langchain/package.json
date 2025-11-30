@@ -123,7 +123,7 @@
       "dist/nodes/text_splitters/TextSplitterRecursiveCharacterTextSplitter/TextSplitterRecursiveCharacterTextSplitter.node.js",
       "dist/nodes/text_splitters/TextSplitterTokenSplitter/TextSplitterTokenSplitter.node.js",
       "dist/nodes/tools/ToolCalculator/ToolCalculator.node.js",
-      "dist/nodes/tools/ToolCobaltEscalation/ToolCobaltEscalation.node.js",
+      "dist/nodes/tools/ToolCobaltEscalationV3/ToolCobaltEscalationV3.node.js",
       "dist/nodes/tools/ToolCobaltRichContent/ToolCobaltRichContent.node.js",
       "dist/nodes/tools/ToolCode/ToolCode.node.js",
       "dist/nodes/tools/ToolHttpRequest/ToolHttpRequest.node.js",
@@ -247,8 +247,6 @@
     "temp": "0.9.4",
     "tmp-promise": "3.0.3",
     "undici": "^6.21.0",
-    "weaviate-client": "3.6.2",
-    "zod": "catalog:",
-    "zod-to-json-schema": "3.23.3"
+    "weaviate-client": "3.6.2"
   }
 }
