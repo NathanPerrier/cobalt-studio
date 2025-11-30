@@ -137,21 +137,30 @@ export class CobaltControl implements INodeType {
 				throw error;
 			}
 
+			if (operation === 'liveAgentRequested') {
+				const value = this.getNodeParameter('value', i) as boolean;
+				// Return data so subsequent nodes can use it to build the final response
+				returnData.push({
+					json: {
+						sessionId,
+						meta: {
+							liveAgentRequested: value,
+						},
+					},
+				});
+				continue;
+			}
+
 			let body: Record<string, unknown> = { sessionId };
+			let uri = `http://localhost:3000/api/internal/message`;
+
 			if (operation === 'email' || operation === 'datastore') {
 				const payload = this.getNodeParameter('payload', i) as object;
 				body = { ...body, payload };
-			} else if (operation === 'liveAgentRequested') {
-				// Map to datastore operation with specific payload
-				const value = this.getNodeParameter('value', i) as boolean;
-				const payload = { liveAgentRequested: value };
-				body = { ...body, payload };
+				uri = `http://localhost:3000/api/state/${operation}`;
+			} else {
+				uri = `http://localhost:3000/api/state/${operation}`;
 			}
-
-			const uri =
-				operation === 'liveAgentRequested'
-					? `http://localhost:3000/api/state/datastore`
-					: `http://localhost:3000/api/state/${operation}`;
 
 			try {
 				const response = (await this.helpers.request({

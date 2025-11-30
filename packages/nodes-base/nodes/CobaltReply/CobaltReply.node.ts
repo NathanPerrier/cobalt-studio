@@ -1,4 +1,4 @@
-import {
+import type {
 	IExecuteFunctions,
 	INodeExecutionData,
 	INodeType,
@@ -416,7 +416,7 @@ export class CobaltReply implements INodeType {
 					},
 					{
 						displayName: 'Live Agent In Queue',
-						name: 'liveAgentRequested', // Mapping liveAgentInQueue to liveAgentRequested as per frontend logic
+						name: 'liveAgentInQueue',
 						type: 'boolean',
 						default: false,
 					},
@@ -432,7 +432,12 @@ export class CobaltReply implements INodeType {
 						type: 'boolean',
 						default: false,
 					},
-					// livechatIssue not explicitly in frontend list but I'll add it
+					{
+						displayName: 'Live Agent Requested',
+						name: 'liveAgentRequested',
+						type: 'boolean',
+						default: false,
+					},
 					{
 						displayName: 'Livechat Issue',
 						name: 'livechatIssue',
@@ -584,6 +589,11 @@ export class CobaltReply implements INodeType {
 				lockInput?: boolean;
 				liveAgentUnavailable?: boolean;
 				livechatIssue?: boolean;
+				getLocation?: boolean;
+				emailRequested?: boolean;
+				emailSent?: boolean;
+				agentTyping?: boolean;
+				applePay?: boolean;
 			};
 
 			const body = {
