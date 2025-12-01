@@ -170,7 +170,7 @@ export class CobaltReply implements INodeType {
 													{ name: 'End Chat', value: '__endchat__' },
 													{ name: 'Close Chat', value: '__close_window__' },
 													{ name: 'Start Survey', value: '__survey__' },
-													{ name: 'Start Over', value: '__start_over__' },
+													{ name: 'Start Over', value: '__reset_chat__' },
 													{ name: 'Email Transcript', value: '__email_transcript__' },
 													{ name: 'Custom', value: 'custom' },
 												],
@@ -610,6 +610,12 @@ export class CobaltReply implements INodeType {
 						type: 'boolean',
 						default: false,
 					},
+					{
+						displayName: 'Chat Expired',
+						name: 'chatExpired',
+						type: 'boolean',
+						default: false,
+					},
 				],
 			},
 		],
@@ -789,6 +795,7 @@ export class CobaltReply implements INodeType {
 				emailRequested?: boolean;
 				emailSent?: boolean;
 				agentTyping?: boolean;
+				chatExpired?: boolean;
 				applePay?: boolean;
 			};
 
