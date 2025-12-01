@@ -56,6 +56,7 @@ export class CobaltReply implements INodeType {
 									{ name: 'File', value: 'file' },
 									{ name: 'Map', value: 'map' },
 									{ name: 'Information', value: 'information' },
+									{ name: 'Splash', value: 'splash' },
 								],
 								default: 'text',
 							},
@@ -153,15 +154,82 @@ export class CobaltReply implements INodeType {
 										name: 'button',
 										displayName: 'Button',
 										values: [
-											{ displayName: 'Text', name: 'text', type: 'string', default: '' },
+											{
+												displayName: 'Text',
+												name: 'text',
+												type: 'string',
+												default: '',
+												required: true,
+												description: 'Button label shown to the user',
+											},
 											{
 												displayName: 'Bot Action',
 												name: 'bot_action',
+												type: 'options',
+												options: [
+													{ name: 'End Chat', value: '__endchat__' },
+													{ name: 'Close Chat', value: '__close_window__' },
+													{ name: 'Start Survey', value: '__survey__' },
+													{ name: 'Start Over', value: '__start_over__' },
+													{ name: 'Email Transcript', value: '__email_transcript__' },
+													{ name: 'Custom', value: 'custom' },
+												],
+												required: true,
+												default: '',
+												description: 'Action triggered when the button is clicked',
+											},
+											{
+												displayName: 'Custom Bot Action',
+												name: 'custom_bot_action',
+												type: 'string',
+												displayOptions: { show: { bot_action: ['custom'] } },
+												default: '',
+												placeholder: 'Enter custom bot action',
+												required: true,
+												description:
+													'Specify a custom bot action value (can be a message or tirgger). NOTE: triggers must be in the foerm of __{node_endpoint}__',
+											},
+											{
+												displayName: 'Link (optional)',
+												name: 'link',
 												type: 'string',
 												default: '',
+												description: 'Optional URL to open when button is clicked',
 											},
-											{ displayName: 'Link', name: 'link', type: 'string', default: '' },
-											{ displayName: 'Icon', name: 'icon', type: 'string', default: '' },
+											{
+												displayName: 'Icon (optional)',
+												name: 'icon',
+												type: 'options',
+												options: [
+													{ name: 'None', value: '' },
+													{ name: 'Right Arrow', value: 'right-arrow' },
+												],
+												default: '',
+												description: 'Icon displayed on the button',
+											},
+											{
+												displayName: 'Type',
+												name: 'type',
+												type: 'options',
+												options: [
+													{ name: 'Default', value: '' },
+													{ name: 'Primary', value: 'primary' },
+													{ name: 'Secondary', value: 'secondary' },
+													{ name: 'Danger', value: 'danger' },
+													{ name: 'Splash', value: 'splash' },
+												],
+												default: '',
+												description: 'Button style variant',
+											},
+											{
+												displayName: 'Title',
+												name: 'title',
+												type: 'string',
+												displayOptions: { show: { type: ['splash'] } },
+												default: '',
+												required: true,
+												description: 'Splash button title (shown above the button)',
+											},
 										],
 									},
 								],
@@ -362,6 +430,103 @@ export class CobaltReply implements INodeType {
 								displayOptions: { show: { type: ['information'] } },
 								default: '',
 							},
+							// SPLASH
+							{
+								displayName: 'Title',
+								name: 'splashTitle',
+								type: 'string',
+								displayOptions: { show: { type: ['splash'] } },
+								default: '',
+							},
+							{
+								displayName: 'Text',
+								name: 'splashText',
+								type: 'string',
+								displayOptions: { show: { type: ['splash'] } },
+								default: '',
+							},
+							{
+								displayName: 'Buttons',
+								name: 'splashButtons',
+								type: 'fixedCollection',
+								displayOptions: { show: { type: ['splash'] } },
+								typeOptions: { multipleValues: true },
+								default: {},
+								options: [
+									{
+										name: 'button',
+										displayName: 'Button',
+										values: [
+											{
+												displayName: 'Text',
+												name: 'text',
+												type: 'string',
+												default: '',
+												required: true,
+												description: 'Button label shown to the user',
+											},
+											{
+												displayName: 'Bot Action',
+												name: 'bot_action',
+												type: 'options',
+												options: [
+													{ name: 'End Chat', value: '__endchat__' },
+													{ name: 'Close Chat', value: '__close_window__' },
+													{ name: 'Start Survey', value: '__survey__' },
+													{ name: 'Start Over', value: '__start_over__' },
+													{ name: 'Email Transcript', value: '__email_transcript__' },
+													{ name: 'Custom', value: 'custom' },
+												],
+												default: 'custom',
+												required: true,
+												description: 'Action triggered when the button is clicked',
+											},
+											{
+												displayName: 'Custom Bot Action',
+												name: 'custom_bot_action',
+												type: 'string',
+												displayOptions: { show: { bot_action: ['custom'] } },
+												default: '',
+												placeholder: 'Enter custom bot action',
+												required: true,
+												description:
+													'Specify a custom bot action value (can be a message or tirgger). NOTE: triggers must be in the foerm of __{node_endpoint}__',
+											},
+											{
+												displayName: 'Link',
+												name: 'link',
+												type: 'string',
+												default: '',
+												description: 'Optional URL to open when button is clicked',
+											},
+											{
+												displayName: 'Icon',
+												name: 'icon',
+												type: 'options',
+												options: [
+													{ name: 'None', value: '' },
+													{ name: 'Right Arrow', value: 'right-arrow' },
+												],
+												default: '',
+												description: 'Icon displayed on the button',
+											},
+											{
+												displayName: 'Type',
+												name: 'type',
+												type: 'options',
+												options: [
+													{ name: 'Default', value: '' },
+													{ name: 'Primary', value: 'primary' },
+													{ name: 'Secondary', value: 'secondary' },
+													{ name: 'Danger', value: 'danger' },
+												],
+												default: '',
+												description: 'Button style variant',
+											},
+										],
+									},
+								],
+							},
 						],
 					},
 				],
@@ -482,6 +647,9 @@ export class CobaltReply implements INodeType {
 			const contentData = this.getNodeParameter('content', i) as { item: any[] };
 			let richContent: any[] = [];
 			let plainText = '';
+			let messageType = 'text';
+			let splashTitle = '';
+			let splashButtons: any[] = [];
 			const debugInfo: any[] = [];
 
 			const contentItems = contentData.item || [];
@@ -519,10 +687,20 @@ export class CobaltReply implements INodeType {
 				} else if (type === 'buttons') {
 					const btns = (item.buttons?.button || []).map((b: any) => ({
 						text: b.text,
-						bot_action: b.bot_action,
+						bot_action: b.bot_action === 'custom' ? b.custom_bot_action : b.bot_action,
 						link: b.link,
 						icon: b.icon,
+						type: b.type,
+						title: b.title,
 					}));
+
+					const splashBtn = btns.find((b: any) => b.type === 'splash');
+					if (splashBtn) {
+						messageType = 'splash';
+						splashTitle = splashBtn.title;
+						splashButtons = btns;
+					}
+
 					if (btns.length) {
 						richContent.push({ type: 'buttons', buttons: btns });
 					}
@@ -584,6 +762,19 @@ export class CobaltReply implements INodeType {
 						type: 'information',
 						text: item.infoText,
 					});
+				} else if (type === 'splash') {
+					messageType = 'splash';
+					splashTitle = item.splashTitle;
+					plainText = item.splashText;
+
+					const btns = (item.splashButtons?.button || []).map((b: any) => ({
+						text: b.text,
+						bot_action: b.bot_action === 'custom' ? b.custom_bot_action : b.bot_action,
+						link: b.link,
+						icon: b.icon,
+						type: b.type,
+					}));
+					splashButtons = btns;
 				}
 			}
 
@@ -603,10 +794,13 @@ export class CobaltReply implements INodeType {
 
 			const body = {
 				sessionId,
-				type: 'text',
+				type: messageType,
 				plainText: plainText || 'Rich Content',
 				richContent,
 				meta: metadata,
+				...(messageType === 'splash'
+					? { title: splashTitle, buttons: splashButtons, text: plainText }
+					: {}),
 			};
 
 			try {
