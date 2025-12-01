@@ -417,6 +417,7 @@
     "nodes": [
       "dist/nodes/CobaltControl/CobaltControl.node.js",
       "dist/nodes/CobaltReply/CobaltReply.node.js",
+      "dist/nodes/CobaltSurvey/CobaltSurvey.node.js",
       "dist/nodes/CobaltTrigger/CobaltGreetingTrigger.node.js",
       "dist/nodes/CobaltTrigger/CobaltLLMTrigger.node.js",
       "dist/nodes/CobaltTrigger/CobaltLiveAgentQueueTrigger.node.js",
