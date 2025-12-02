@@ -125,6 +125,7 @@
       "dist/nodes/tools/ToolCalculator/ToolCalculator.node.js",
       "dist/nodes/tools/ToolCobaltEscalationV3/ToolCobaltEscalationV3.node.js",
       "dist/nodes/tools/ToolCobaltRichContent/ToolCobaltRichContent.node.js",
+      "dist/nodes/tools/ToolCobaltHTML/ToolCobaltHTML.node.js",
       "dist/nodes/tools/ToolCode/ToolCode.node.js",
       "dist/nodes/tools/ToolHttpRequest/ToolHttpRequest.node.js",
       "dist/nodes/tools/ToolSearXng/ToolSearXng.node.js",

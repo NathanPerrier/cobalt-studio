@@ -16,81 +16,98 @@ import { getConnectionHintNoticeField } from '@utils/sharedFields';
 
 // --- Schemas ---
 
-const LinkSchema = z.object({
-	url: z.string().describe('The URL to link to'),
-	text: z.string().optional().describe('The text to display for the link'),
-});
-
-const ButtonSchema = z.object({
-	text: z.string().describe('The text on the button'),
-	bot_action: z.string().describe('The action to send back to the bot when clicked'),
-});
-
-const ImageSchema = z.object({
-	src: z.string().describe('The source URL of the image'),
-	alt: z.string().describe('The alt text for the image'),
+const ButtonActionSchema = z.object({
+	text: z.string().describe('Button label'),
+	bot_action: z.string().describe('Action triggered when clicked'),
+	link: z.string().optional().describe('URL to open'),
+	icon: z.string().optional().describe('Icon name (e.g., "right-arrow")'),
+	type: z.string().optional().describe('Button style (primary, secondary, danger, splash)'),
+	title: z.string().optional().describe('Title (shown above button for splash type)'),
 });
 
 const TopLevelSchema = z.object({
 	type: z
+		.enum([
+			'text',
+			'image',
+			'card',
+			'buttons',
+			'quickReply',
+			'list',
+			'carousel',
+			'file',
+			'map',
+			'information',
+			'splash',
+		])
+		.describe('The type of rich content to send. Use "list" for bullet points/numbered lists.'),
+
+	// Common / Text
+	text: z
 		.string()
+		.optional()
 		.describe(
-			'The type of rich content to send (card, carousel, list, map, quickReply, flightcard, rideshare, table)',
+			'Main text content. Required for "text", "information", "splash". Optional for others.',
+		),
+	plainText: z.string().optional().describe('Fallback plain text.'),
+
+	// Card / List / Map / Splash
+	title: z.string().optional().describe('Title for card, list, map, or splash.'),
+	subtitle: z.string().optional().describe('Subtitle for card or carousel item.'),
+
+	// Image
+	imageSrc: z.string().optional().describe('Source URL for image.'),
+	imageAlt: z.string().optional().describe('Alt text for image.'),
+	imageLink: z.string().optional().describe('Link URL for image.'),
+
+	// Buttons (Standalone or Splash)
+	buttons: z
+		.array(ButtonActionSchema)
+		.optional()
+		.describe('Array of buttons for "buttons" or "splash" type.'),
+
+	// Card specific
+	cardButtonText: z.string().optional().describe('Button text for card.'),
+	cardButtonAction: z.string().optional().describe('Button action for card.'),
+
+	// Quick Reply
+	replies: z.array(z.string()).optional().describe('List of quick reply options.'),
+	format: z.enum(['default', 'cloud']).optional(),
+
+	// List / Carousel Items
+	items: z
+		.array(
+			z.object({
+				text: z.string().optional().describe('Text for list item or card body'),
+				bot_action: z.string().optional().describe('Bot action for list item'),
+				link: z.string().optional().describe('Link URL for list item'),
+				title: z.string().optional().describe('Title for card'),
+				subtitle: z.string().optional().describe('Subtitle for card'),
+				imageUrl: z.string().optional().describe('Image URL for card'),
+				imageAlt: z.string().optional().describe('Image alt text for card'),
+				buttonText: z.string().optional().describe('Button text for card'),
+				buttonAction: z.string().optional().describe('Button action for card'),
+			}),
+		)
+		.optional()
+		.describe(
+			'Array of items for "list" or "carousel". For "list", use fields: text, bot_action, link. For "carousel", use fields: title, subtitle, text, imageUrl, imageAlt, buttonText, buttonAction.',
 		),
 
-	// Common/Card fields
-	title: z.string().optional().describe('Title for card, list, map, etc.'),
-	subtitle: z.string().optional().describe('Subtitle for card'),
-	text: z
-		.union([z.string(), z.array(z.string())])
-		.optional()
-		.describe('Text content (string) or array of text lines'),
-	image: ImageSchema.optional().describe('Image for card'),
-	link: LinkSchema.optional().describe('Link for card or map'),
-	button: ButtonSchema.optional().describe('Button for card'),
-	className: z.string().optional(),
-
-	// List fields
-	ordered: z.boolean().optional(),
-	items: z
-		.array(z.record(z.any()))
-		.optional()
-		.describe('Items for Carousel (Cards/Maps) or List (ListItem objects)'),
+	// List specific
+	ordered: z.boolean().optional().describe('True for numbered list, false for bullet points'),
 	footer: z.string().optional(),
 
-	// Map fields
-	mapMode: z.string().optional().describe('Map mode (place, view, directions, streetview, search)'),
-	parameters: z.string().optional().describe('Map parameters'),
+	// File
+	fileName: z.string().optional().describe('File name.'),
+	fileSize: z.string().optional().describe('File size.'),
+	fileUrl: z.string().optional().describe('File or Link URL.'),
 
-	// Quick Reply fields
-	replies: z.array(z.string()).optional().describe('Quick replies'),
-	format: z.string().optional(),
-
-	// Flight/Rideshare fields
-	layout: z.string().optional(),
-	date: z.string().optional(),
-	depart: z.record(z.any()).optional(),
-	arrive: z.record(z.any()).optional(),
-	price: z.union([z.string(), z.number()]).optional(),
-	name: z.string().optional(),
-	departure: z.string().optional(),
-	destination: z.string().optional(),
-	options: z.array(z.record(z.any())).optional(),
-
-	// Table fields
-	data: z
-		.object({
-			headers: z.array(z.string()).describe('Array of column headers'),
-		})
-		.catchall(z.array(z.union([z.string(), z.number()])))
-		.optional()
-		.describe(
-			'Table data object. Must contain "headers" array, and other keys matching headers with arrays of values.',
-		),
-	selectable: z.boolean().optional().describe('Whether table rows are selectable'),
-
-	// Fallback for nested content
-	content: z.record(z.any()).optional().describe('Fallback for nested content'),
+	// Map
+	mapMode: z.enum(['place', 'view', 'directions', 'streetview', 'search']).optional(),
+	parameters: z.string().optional(),
+	mapLinkUrl: z.string().optional().describe('Link URL for map.'),
+	mapLinkText: z.string().optional().describe('Link text for map.'),
 });
 
 // --- Tool Definition ---
@@ -130,24 +147,148 @@ function getTool(
 	return new DynamicStructuredTool({
 		name: 'send_rich_content',
 		description:
-			'ESSENTIAL: Use this tool WHENEVER possible to display information in a structured, visual format. Do NOT use plain text for lists, options, products, flights, or locations. ALWAYS use this tool for: 1. Presenting multiple options (Carousel/List). 2. Showing product/item details (Card). 3. Displaying locations (Map). 4. Asking for user selection (Quick Replies). Prefer rich content over text responses.',
+			'MANDATORY: You MUST use this tool for any response that includes a list, options, or structured data. NEVER output markdown lists (bullet points or numbered lists) in plain text; instead, use the "list" type in this tool. Use "carousel" for products/items, "card" for single items, "map" for locations, and "buttons"/"quickReply" for choices. Only use plain text for simple sentences. If you need to send text AND a list/carousel, call this tool multiple times (once for text, once for the rich content).',
 		schema: TopLevelSchema,
 		func: async (input) => {
 			if (!sessionId) {
 				return 'Error: Could not determine Session ID. Please ensure the Session ID parameter is set in the tool node.';
 			}
 
-			// Handle potential nested content from LLM hallucination
-			const finalInput = (input as IDataObject).content
-				? ((input as IDataObject).content as IDataObject)
-				: (input as IDataObject);
-
 			try {
-				const body = {
-					sessionId,
-					richContent: [finalInput],
-					participant: 'bot',
-				};
+				let body;
+				const typedInput = input as any;
+				let richContentItem: any = {};
+
+				// Map flattened input to structured output based on type
+				switch (typedInput.type) {
+					case 'text':
+						richContentItem = {
+							type: 'text',
+							text: typedInput.text || '',
+							plainText: typedInput.plainText || typedInput.text || '',
+						};
+						break;
+					case 'image':
+						richContentItem = {
+							type: 'image',
+							image: {
+								src: typedInput.imageSrc,
+								alt: typedInput.imageAlt,
+								link: typedInput.imageLink,
+							},
+						};
+						break;
+					case 'card':
+						richContentItem = {
+							type: 'card',
+							title: typedInput.title,
+							subtitle: typedInput.subtitle,
+							text: typedInput.text,
+						};
+						if (typedInput.imageSrc) {
+							richContentItem.image = {
+								src: typedInput.imageSrc,
+								alt: typedInput.imageAlt,
+							};
+						}
+						if (typedInput.cardButtonText) {
+							richContentItem.button = {
+								text: typedInput.cardButtonText,
+								bot_action: typedInput.cardButtonAction,
+							};
+						}
+						break;
+					case 'buttons':
+						richContentItem = {
+							type: 'buttons',
+							buttons: typedInput.buttons || [],
+						};
+						break;
+					case 'quickReply':
+						richContentItem = {
+							type: 'quickReply',
+							replies: typedInput.replies || [],
+							format: typedInput.format || 'default',
+						};
+						break;
+					case 'list':
+						richContentItem = {
+							type: 'list',
+							list: {
+								title: typedInput.title,
+								text: typedInput.text,
+								ordered: typedInput.ordered || false,
+								footer: typedInput.footer,
+								items: (typedInput.items || []).map((item: any) => ({
+									text: item.text,
+									bot_action: item.bot_action,
+									link: item.link,
+								})),
+							},
+						};
+						break;
+					case 'carousel':
+						richContentItem = {
+							type: 'carousel',
+							items: (typedInput.items || []).map((item: any) => ({
+								type: 'card',
+								title: item.title,
+								subtitle: item.subtitle,
+								text: item.text,
+								image: item.imageUrl ? { src: item.imageUrl, alt: item.imageAlt } : undefined,
+								button: item.buttonText
+									? { text: item.buttonText, bot_action: item.buttonAction }
+									: undefined,
+							})),
+						};
+						break;
+					case 'file':
+						richContentItem = {
+							type: 'file',
+							name: typedInput.fileName,
+							size: typedInput.fileSize,
+							url: typedInput.fileUrl,
+						};
+						break;
+					case 'map':
+						richContentItem = {
+							type: 'map',
+							mapMode: typedInput.mapMode,
+							parameters: typedInput.parameters,
+							title: typedInput.title,
+							text: typedInput.text,
+							link: typedInput.mapLinkUrl
+								? { url: typedInput.mapLinkUrl, text: typedInput.mapLinkText }
+								: undefined,
+						};
+						break;
+					case 'information':
+						richContentItem = {
+							type: 'information',
+							text: typedInput.text || '',
+						};
+						break;
+					case 'splash':
+						// Splash is special, it's a top-level message type, not just rich content
+						break;
+				}
+
+				if (typedInput.type === 'splash') {
+					body = {
+						sessionId,
+						type: 'splash',
+						title: typedInput.title || '',
+						text: typedInput.text || '',
+						buttons: typedInput.buttons || [],
+						participant: 'bot',
+					};
+				} else {
+					body = {
+						sessionId,
+						richContent: [richContentItem],
+						participant: 'bot',
+					};
+				}
 
 				const url = `${apiBaseUrl.replace(/\/$/, '')}/api/internal/message`;
 
