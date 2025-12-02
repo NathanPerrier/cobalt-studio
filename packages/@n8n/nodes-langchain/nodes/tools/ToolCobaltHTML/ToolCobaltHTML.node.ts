@@ -18,7 +18,7 @@ const HtmlSchema = z.object({
 	html: z
 		.string()
 		.describe(
-			'The raw HTML content to send. You MUST use valid HTML tags for formatting. Use <br> for line breaks, NOT \\n. Do NOT use Markdown. Supported tags: <table>, <thead>, <tbody>, <tr>, <th>, <td>, <b>, <strong>, <i>, <em>, <u>, <br>, <p>, <h1>-<h6>, <ul>, <ol>, <li>, <a>, <span>, <div>.',
+			'The raw HTML content to send. You MUST use valid HTML tags for formatting. Use <br> for line breaks, NOT \\n. Do NOT use Markdown. Supported tags: <table>, <thead>, <tbody>, <tr>, <th>, <td>, <b>, <strong>, <i>, <em>, <u>, <br>, <p>, <h1>-<h6>, <ul>, <ol>, <li>, <a>, <span>, <div>. Do NOT wrap the entire message in <b> tags.',
 		),
 });
 
@@ -64,12 +64,21 @@ function getTool(
 			}
 
 			try {
+				const plainText = input.html.replace(/<[^>]*>?/gm, '');
+				const htmlText = input.html.replace(/\n/g, '<br>');
+
 				const body = {
 					sessionId,
 					type: 'text',
-					text: input.html.replace(/\n/g, '<br>'),
-					plainText: input.html.replace(/<[^>]*>?/gm, ''),
-					richContent: [],
+					text: htmlText,
+					plainText,
+					richContent: [
+						{
+							type: 'text',
+							plainText,
+							text: htmlText,
+						},
+					],
 					participant: 'bot',
 				};
 

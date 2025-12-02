@@ -674,21 +674,21 @@ export class CobaltReply implements INodeType {
 					richContent.push({
 						type: 'image',
 						image: {
-							src: item.src,
-							alt: item.alt,
-							link: item.link,
+							src: item.imageSrc,
+							alt: item.imageAlt,
+							link: item.imageLink,
 						},
 					});
 				} else if (type === 'card') {
 					const card: any = {
 						type: 'card',
-						title: item.title,
-						subtitle: item.subtitle,
-						text: item.text,
+						title: item.cardTitle,
+						subtitle: item.cardSubtitle,
+						text: item.cardText,
 					};
-					if (item.imageUrl) card.image = { src: item.imageUrl, alt: item.imageAlt };
-					if (item.buttonText)
-						card.button = { text: item.buttonText, bot_action: item.buttonAction };
+					if (item.cardImageUrl) card.image = { src: item.cardImageUrl, alt: item.cardImageAlt };
+					if (item.cardButtonText)
+						card.button = { text: item.cardButtonText, bot_action: item.cardButtonAction };
 					richContent.push(card);
 				} else if (type === 'buttons') {
 					const btns = (item.buttons?.button || []).map((b: any) => ({
