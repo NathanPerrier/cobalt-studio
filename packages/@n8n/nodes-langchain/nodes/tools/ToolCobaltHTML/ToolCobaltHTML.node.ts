@@ -18,7 +18,7 @@ const HtmlSchema = z.object({
 	html: z
 		.string()
 		.describe(
-			'The raw HTML content to send. You MUST use valid HTML tags for formatting (e.g., <b>bold</b>, <ul><li>item</li></ul>). Do NOT use Markdown (e.g., **bold**, - item). Supported tags: <table>, <thead>, <tbody>, <tr>, <th>, <td>, <b>, <strong>, <i>, <em>, <u>, <br>, <p>, <h1>-<h6>, <ul>, <ol>, <li>, <a>, <span>, <div>.',
+			'The raw HTML content to send. You MUST use valid HTML tags for formatting. Use <br> for line breaks, NOT \\n. Do NOT use Markdown. Supported tags: <table>, <thead>, <tbody>, <tr>, <th>, <td>, <b>, <strong>, <i>, <em>, <u>, <br>, <p>, <h1>-<h6>, <ul>, <ol>, <li>, <a>, <span>, <div>.',
 		),
 });
 
@@ -46,7 +46,6 @@ function getTool(
 		apiBaseUrl = 'http://localhost:3000';
 	}
 
-	// Clean up URL
 	apiBaseUrl = apiBaseUrl.trim();
 
 	// Ensure protocol
@@ -67,9 +66,9 @@ function getTool(
 			try {
 				const body = {
 					sessionId,
-					type: 'text', // We use 'text' type because the frontend renders text with v-html
-					text: input.html,
-					plainText: input.html.replace(/<[^>]*>?/gm, ''), // Strip HTML for plain text fallback
+					type: 'text',
+					text: input.html.replace(/\n/g, '<br>'),
+					plainText: input.html.replace(/<[^>]*>?/gm, ''),
 					richContent: [],
 					participant: 'bot',
 				};
