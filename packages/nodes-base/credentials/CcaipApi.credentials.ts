@@ -1,9 +1,4 @@
-import type {
-	IAuthenticateGeneric,
-	ICredentialTestRequest,
-	ICredentialType,
-	INodeProperties,
-} from 'n8n-workflow';
+import type { ICredentialType, INodeProperties } from 'n8n-workflow';
 
 export class CcaipApi implements ICredentialType {
 	name = 'ccaipApi';
@@ -34,28 +29,24 @@ export class CcaipApi implements ICredentialType {
 				password: true,
 			},
 			default: '',
+			description: 'API Key for Management API',
+		},
+		{
+			displayName: 'Secret',
+			name: 'secret',
+			type: 'string',
+			typeOptions: {
+				password: true,
+			},
+			default: '',
+			description: 'Secret for signing JWT tokens (Client API)',
+		},
+		{
+			displayName: 'Issuer (Company Name)',
+			name: 'issuer',
+			type: 'string',
+			default: '',
+			description: 'The issuer claim for the JWT (usually the Company Name or ID)',
 		},
 	];
-
-	authenticate: IAuthenticateGeneric = {
-		type: 'generic',
-		properties: {
-			headers: {
-				api_key: '={{$credentials.apiKey}}',
-			},
-		},
-	};
-
-	// Placeholder test request
-	test: ICredentialTestRequest = {
-		request: {
-			baseURL: 'https://{{$credentials.subdomain}}.{{$credentials.domain}}/apps/api/v1',
-			url: '/chats', // This might fail if it needs POST, but good for connection check if there's a GET
-			method: 'POST', // Create chat is POST, but requires body.
-			// We might want to find a lightweight GET endpoint for testing.
-			// Since we don't have one, we'll omit or comment out 'test' if it causes issues,
-			// or try a safe GET if one existed.
-			// I'll leave it simpler for now.
-		},
-	};
 }
