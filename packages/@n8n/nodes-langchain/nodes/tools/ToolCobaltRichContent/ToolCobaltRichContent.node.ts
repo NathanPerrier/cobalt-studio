@@ -18,7 +18,7 @@ import { getConnectionHintNoticeField } from '@utils/sharedFields';
 
 const ButtonActionSchema = z.object({
 	text: z.string().describe('Button label'),
-	bot_action: z.string().describe('Action triggered when clicked'),
+	bot_action: z.string().optional().describe('Action triggered when clicked'),
 	link: z.string().optional().describe('URL to open'),
 	icon: z.string().optional().describe('Icon name (e.g., "right-arrow")'),
 	type: z.string().optional().describe('Button style (primary, secondary, danger, splash)'),
@@ -40,6 +40,7 @@ const TopLevelSchema = z.object({
 			'information',
 			'splash',
 		])
+		.optional()
 		.describe('The type of rich content to send. Use "list" for bullet points/numbered lists.'),
 
 	// Common / Text
@@ -147,7 +148,7 @@ function getTool(
 	return new DynamicStructuredTool({
 		name: 'send_rich_content',
 		description:
-			'MANDATORY: You MUST use this tool for any response that includes a list, options, or structured data. NEVER output markdown lists (bullet points or numbered lists) in plain text; instead, use the "list" type in this tool. Use "carousel" for products/items, "card" for single items, "map" for locations, and "buttons"/"quickReply" for choices. Only use plain text for simple sentences. If you need to send text AND a list/carousel, call this tool multiple times (once for text, once for the rich content).',
+			'MANDATORY: You MUST use this tool for any response that includes a list, options, or structured data. NEVER output markdown lists (bullet points or numbered lists) in plain text; instead, use the "list" type in this tool. Use "carousel" for products/items, "card" for single items, "map" for locations, and "buttons"/"quickReply" for choices. Only use plain text for simple sentences. If you need to send text AND a list/carousel, call this tool multiple times (once for text, once for the rich content). NOTE: This tool sends the message directly to the user. Do NOT repeat the content in your final response.',
 		schema: TopLevelSchema,
 		func: async (input) => {
 			if (!sessionId) {
@@ -160,7 +161,8 @@ function getTool(
 				let richContentItem: any = {};
 
 				// Map flattened input to structured output based on type
-				switch (typedInput.type) {
+				const type = typedInput.type || 'text';
+				switch (type) {
 					case 'text':
 						richContentItem = {
 							type: 'text',
@@ -273,7 +275,7 @@ function getTool(
 						break;
 				}
 
-				if (typedInput.type === 'splash') {
+				if (type === 'splash') {
 					body = {
 						sessionId,
 						type: 'splash',
@@ -299,7 +301,7 @@ function getTool(
 					json: true,
 				});
 
-				return 'Rich content sent successfully to the user.';
+				return 'Rich content sent.';
 			} catch (error) {
 				const errorMessage = error instanceof Error ? error.message : String(error);
 				return `Error sending rich content to ${apiBaseUrl}: ${errorMessage}`;
